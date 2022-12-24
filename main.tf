@@ -23,3 +23,31 @@ resource "google_storage_bucket" "tfstate" {
     enabled = true
   }
 }
+
+resource "google_cloud_run_service" "christmas_countdown" {
+  name     = "christmas-countdown"
+  location = "us-central1"
+
+  template {
+    spec {
+      containers {
+        image = var.image
+      }
+    }
+  }
+}
+
+data "google_iam_policy" "noauth" {
+  binding {
+    role    = "roles/run.invoker"
+    members = ["allUsers"]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location = google_cloud_run_service.christmas_countdown.location
+  project  = google_cloud_run_service.christmas_countdown.project
+  service  = google_cloud_run_service.christmas_countdown.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
+}

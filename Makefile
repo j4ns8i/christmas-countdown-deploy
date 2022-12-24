@@ -1,5 +1,9 @@
 IMAGE := christmas-countdown-deploy:latest
 
+SERVICE_IMAGE     := us-central1-docker.pkg.dev/christmas-countdown-372221/christmas-countdown/christmas-countdown
+SERVICE_TAG       := v0.1.0
+SERVICE_IMAGE_TAG := $(SERVICE_IMAGE):$(SERVICE_TAG)
+
 DOCKER_RUN_CMD = docker run \
 				  --rm \
 				  -ti \
@@ -20,11 +24,11 @@ terraform-fmt: docker-build
 
 .PHONY: terraform-plan
 terraform-plan: docker-build
-	$(DOCKER_RUN_CMD) terraform plan
+	$(DOCKER_RUN_CMD) terraform plan -var 'image=$(SERVICE_IMAGE_TAG)'
 
 .PHONY: terraform-apply
 terraform-apply: docker-build
-	$(DOCKER_RUN_CMD) terraform apply
+	$(DOCKER_RUN_CMD) terraform apply -var 'image=$(SERVICE_IMAGE_TAG)'
 
 .PHONY: shell
 shell: docker-build
