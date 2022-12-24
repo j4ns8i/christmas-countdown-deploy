@@ -12,8 +12,6 @@ DOCKER_RUN_CMD = docker run \
 docker-build:
 	docker build \
 		-t christmas-countdown-deploy \
-		--build-arg USER_ID=$(shell id -u) \
-		--build-arg GROUP_ID=$(shell id -g) \
 		.
 
 .PHONY: terraform-fmt
